@@ -14,23 +14,30 @@ import {
 import { compareColors, stringToColor } from '@iconify/utils/lib/colors'
 
 export interface ImportSvgCollectionOptions {
-  /** SVG directory path */
+  /** Absolute or relative path to the SVG directory. */
   source: string
   /**
-   * Whether to include SVG files from subdirectories
+   * Include SVG files from subdirectories.
    * @default true
    */
   includeSubDirs?: boolean
 }
 
 export interface ImportSvgCollectionsOptions {
-  /** SVG root directory path */
+  /** Absolute or relative path to the root directory that contains SVG folders. */
   source: string
+  /**
+   * Optional prefix prepended to each generated collection key.
+   *
+   * For example, `prefix: 'custom'` yields keys like `custom-alerts-line`.
+   */
   prefix?: string
 }
 
 /**
- * Process icons in an icon set with color handling and optimization
+ * Normalizes and optimizes all icons in an icon set in place.
+ *
+ * Invalid icons are skipped and removed from the set.
  */
 function processIconSet(iconSet: IconSet): void {
   // Track icons to remove due to processing errors
@@ -110,21 +117,18 @@ function processIconSet(iconSet: IconSet): void {
 }
 
 /**
- * Import an SVG icon collection from a directory.
+ * Imports one SVG directory as a single Iconify collection.
  *
- * Processes all SVG files in the specified directory, applying cleanup,
- * color normalization, and optimization. Invalid icons are skipped with
- * a warning rather than failing the entire import.
+ * @param options Import options.
+ * @returns A single Iconify JSON collection exported from the directory.
  *
  * @example
  * ```ts
- * import { importSvgCollection } from '@egoist/tailwindcss-icons/iconify'
+ * import { importSvgCollection } from 'iconify-import-svg'
  *
- * // Prefix is derived from directory name
- * const icons = importSvgCollection({
+ * const collection = importSvgCollection({
  *   source: './my-icons',
  * })
- * // icons.prefix === 'my-icons'
  * ```
  */
 export function importSvgCollection(
@@ -143,7 +147,7 @@ export function importSvgCollection(
 }
 
 /**
- * Find all directories that directly contain SVG files
+ * Finds all directories under `rootDir` that directly contain `.svg` files.
  */
 function findSvgDirectories(rootDir: string): string[] {
   const result: string[] = []
@@ -178,29 +182,23 @@ function findSvgDirectories(rootDir: string): string[] {
 }
 
 /**
- * Import multiple SVG icon collections from a directory tree.
+ * Imports a directory tree as multiple Iconify collections.
  *
- * Scans the directory tree and creates separate icon sets for each directory
- * that directly contains SVG files. Subdirectories are traversed recursively,
- * but each collection only includes SVG files directly in that directory
- * (not nested further).
+ * Every directory that directly contains SVG files becomes one collection.
+ * Returned keys are built from the relative path joined with `-`.
+ *
+ * @param options Import options.
+ * @returns A map of collection key to Iconify JSON.
  *
  * @example
  * ```ts
- * import { importSvgCollections } from '@egoist/tailwindcss-icons/iconify'
- *
- * // Directory structure:
- * // icons/
- * //   arrows/
- * //     left.svg
- * //     right.svg
- * //   alerts/
- * //     warning.svg
+ * import { importSvgCollections } from 'iconify-import-svg'
  *
  * const collections = importSvgCollections({
  *   source: './icons',
+ *   prefix: 'custom',
  * })
- * // Result: { arrows: IconifyJSON, alerts: IconifyJSON }
+ * // Result keys: custom-alerts, custom-arrows
  * ```
  */
 export function importSvgCollections(
