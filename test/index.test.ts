@@ -19,10 +19,10 @@ describe('importSvgCollection', () => {
       {
         "icons": {
           "alert-triangle": {
-            "body": "<path fill="none" stroke="#f79009" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25" d="M8 5.333V8m0 2.666h.006M6.86 1.906l-5.647 9.427a1.334 1.334 0 0 0 1.14 2h11.293a1.333 1.333 0 0 0 1.14-2L9.14 1.906a1.333 1.333 0 0 0-2.28 0"/>",
+            "body": "<path fill="none" stroke="#F79009" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25" d="M8 5.333V8m0 2.666h.006M6.86 1.906l-5.647 9.427a1.334 1.334 0 0 0 1.14 2h11.293a1.333 1.333 0 0 0 1.14-2L9.14 1.906a1.333 1.333 0 0 0-2.28 0"/>",
           },
           "arrow-narrow-left": {
-            "body": "<path fill="none" stroke="#155eef" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.363 8H2.696m0 0l4 4m-4-4l4-4"/>",
+            "body": "<path fill="none" stroke="#155EEF" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.363 8H2.696m0 0l4 4m-4-4l4-4"/>",
             "width": 17,
           },
           "arrow-up-right": {
@@ -77,7 +77,7 @@ describe('importSvgCollections', () => {
         "public-avatar": {
           "icons": {
             "user": {
-              "body": "<g fill="none"><g clip-path="url(#svgID0)"><rect width="512" height="512" fill="#b2ddff" rx="256"/><circle cx="256" cy="196" r="84" fill="#fff" opacity=".68"/><ellipse cx="256" cy="583.5" fill="#fff" opacity=".68" rx="266" ry="274.5"/></g><defs><clipPath id="svgID0"><rect width="512" height="512" fill="#fff" rx="256"/></clipPath></defs></g>",
+              "body": "<g fill="none"><g clip-path="url(#svgID0)"><rect width="512" height="512" fill="#B2DDFF" rx="256"/></g><defs><clipPath id="svgID0"><rect width="512" height="512" fill="#fff" rx="256"/></clipPath></defs></g>",
               "height": 512,
               "width": 512,
             },
@@ -95,7 +95,7 @@ describe('importSvgCollections', () => {
         "vender-line-alertsAndFeedback": {
           "icons": {
             "alert-triangle": {
-              "body": "<path fill="none" stroke="#f79009" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25" d="M8 5.333V8m0 2.666h.006M6.86 1.906l-5.647 9.427a1.334 1.334 0 0 0 1.14 2h11.293a1.333 1.333 0 0 0 1.14-2L9.14 1.906a1.333 1.333 0 0 0-2.28 0"/>",
+              "body": "<path fill="none" stroke="#F79009" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25" d="M8 5.333V8m0 2.666h.006M6.86 1.906l-5.647 9.427a1.334 1.334 0 0 0 1.14 2h11.293a1.333 1.333 0 0 0 1.14-2L9.14 1.906a1.333 1.333 0 0 0-2.28 0"/>",
             },
             "thumbs-down": {
               "body": "<g fill="none"><g clip-path="url(#svgID0)"><path stroke="#667085" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.333 1.334v7.333m3.334-2.133V3.467c0-.746 0-1.12-.146-1.405a1.33 1.33 0 0 0-.582-.583c-.286-.145-.659-.145-1.406-.145H5.412c-.974 0-1.462 0-1.855.178a2 2 0 0 0-.85.73c-.236.36-.31.842-.458 1.805L1.9 6.314c-.195 1.27-.293 1.905-.104 2.4a2 2 0 0 0 .88 1.025c.46.262 1.102.262 2.387.262H5.6c.373 0 .56 0 .703.072a.67.67 0 0 1 .291.292c.073.142.073.329.073.702v1.956c0 .908.736 1.644 1.644 1.644a.55.55 0 0 0 .5-.325l2.24-5.041c.103-.23.154-.344.234-.428a.7.7 0 0 1 .256-.166c.11-.04.235-.04.486-.04h.506c.747 0 1.12 0 1.406-.145c.25-.128.454-.332.582-.583c.146-.285.146-.658.146-1.405"/></g><defs><clipPath id="svgID0"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs></g>",
@@ -106,7 +106,7 @@ describe('importSvgCollections', () => {
         "vender-line-arrows": {
           "icons": {
             "arrow-narrow-left": {
-              "body": "<path fill="none" stroke="#155eef" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.363 8H2.696m0 0l4 4m-4-4l4-4"/>",
+              "body": "<path fill="none" stroke="#155EEF" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.363 8H2.696m0 0l4 4m-4-4l4-4"/>",
               "width": 17,
             },
             "arrow-up-right": {
