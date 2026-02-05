@@ -13,7 +13,30 @@ import {
 } from '@iconify/tools'
 import { compareColors, stringToColor } from '@iconify/utils/lib/colors'
 
-export interface ImportSvgCollectionOptions {
+export interface ProcessIconSetOptions {
+  /**
+   * @default true
+   */
+  cleanupSVG?: boolean
+  /**
+   * @default true
+   */
+  parseColors?: boolean
+  /**
+   * @default true
+   */
+  runSVGO?: boolean
+  /**
+   * @default true
+   */
+  deOptimisePaths?: boolean
+}
+
+export interface ImportBaseOptions {
+  ignoreImportErrors?: boolean | 'warn'
+}
+
+export interface ImportSvgCollectionOptions extends ProcessIconSetOptions, ImportBaseOptions {
   /** Absolute or relative path to the SVG directory. */
   source: string
   /**
@@ -23,7 +46,7 @@ export interface ImportSvgCollectionOptions {
   includeSubDirs?: boolean
 }
 
-export interface ImportSvgCollectionsOptions {
+export interface ImportSvgCollectionsOptions extends ProcessIconSetOptions, ImportBaseOptions {
   /** Absolute or relative path to the root directory that contains SVG folders. */
   source: string
   /**
@@ -39,7 +62,20 @@ export interface ImportSvgCollectionsOptions {
  *
  * Invalid icons are skipped and removed from the set.
  */
-function processIconSet(iconSet: IconSet): void {
+function processIconSet({
+  iconSet,
+  options,
+}: {
+  iconSet: IconSet
+  options?: ProcessIconSetOptions
+}): void {
+  const {
+    cleanupSVG: shouldCleanupSVG = true,
+    parseColors: shouldParseColors = true,
+    runSVGO: shouldRunSVGO = true,
+    deOptimisePaths: shouldDeOptimisePaths = true,
+  } = options || {}
+
   // Track icons to remove due to processing errors
   const iconsToRemove: string[] = []
 
@@ -58,45 +94,53 @@ function processIconSet(iconSet: IconSet): void {
     try {
       // Clean up and validate icon
       // This will throw an exception if icon is invalid
-      cleanupSVG(svg)
+      if (shouldCleanupSVG) {
+        cleanupSVG(svg)
+      }
 
       // Change color to `currentColor`
       // Skip this step if icon has hardcoded palette
       const blackColor = stringToColor('black')!
       const whiteColor = stringToColor('white')!
-      parseColors(svg, {
-        defaultColor: 'currentColor',
-        callback: (attr, colorStr, color) => {
-          if (!color) {
-            // Color cannot be parsed!
-            throw new Error(`Invalid color: "${colorStr}" in attribute ${attr}`)
-          }
+      if (shouldParseColors) {
+        parseColors(svg, {
+          defaultColor: 'currentColor',
+          callback: (attr, colorStr, color) => {
+            if (!color) {
+              // Color cannot be parsed!
+              throw new Error(`Invalid color: "${colorStr}" in attribute ${attr}`)
+            }
 
-          if (isEmptyColor(color)) {
+            if (isEmptyColor(color)) {
             // Color is empty: 'none' or 'transparent'. Return as is
+              return color
+            }
+
+            // Change black to 'currentColor'
+            if (compareColors(color, blackColor)) {
+              return 'currentColor'
+            }
+
+            // Remove shapes with white color
+            if (compareColors(color, whiteColor)) {
+              return 'remove'
+            }
+
+            // Icon is not monotone
             return color
-          }
-
-          // Change black to 'currentColor'
-          if (compareColors(color, blackColor)) {
-            return 'currentColor'
-          }
-
-          // Remove shapes with white color
-          if (compareColors(color, whiteColor)) {
-            return 'remove'
-          }
-
-          // Icon is not monotone
-          return color
-        },
-      })
+          },
+        })
+      }
 
       // Optimise
-      runSVGO(svg)
+      if (shouldRunSVGO) {
+        runSVGO(svg)
+      }
 
       // Update paths for compatibility with old software
-      deOptimisePaths(svg)
+      if (shouldDeOptimisePaths) {
+        deOptimisePaths(svg)
+      }
 
       // SVG instance is detached from icon set, so changes to
       // icon are not stored in icon set automatically.
@@ -134,14 +178,19 @@ function processIconSet(iconSet: IconSet): void {
 export function importSvgCollection(
   options: ImportSvgCollectionOptions,
 ): IconifyJSON {
-  const { source, includeSubDirs = true } = options
+  const {
+    source,
+    includeSubDirs = true,
+    ignoreImportErrors = 'warn',
+    ...processIconSetOptions
+  } = options
 
   const iconSet = importDirectorySync(source, {
-    ignoreImportErrors: 'warn',
+    ignoreImportErrors,
     includeSubDirs,
   })
 
-  processIconSet(iconSet)
+  processIconSet({ iconSet, options: processIconSetOptions })
 
   return iconSet.export()
 }
@@ -204,7 +253,12 @@ function findSvgDirectories(rootDir: string): string[] {
 export function importSvgCollections(
   options: ImportSvgCollectionsOptions,
 ): Record<string, IconifyJSON> {
-  const { source, prefix } = options
+  const {
+    source,
+    prefix,
+    ignoreImportErrors = 'warn',
+    ...processIconSetOptions
+  } = options
 
   const svgDirs = findSvgDirectories(source)
 
@@ -215,11 +269,11 @@ export function importSvgCollections(
     const pathPrefix = relativePath.split(path.sep).join('-')
 
     const iconSet = importDirectorySync(dir, {
-      ignoreImportErrors: 'warn',
+      ignoreImportErrors,
       includeSubDirs: false,
     })
 
-    processIconSet(iconSet)
+    processIconSet({ iconSet, options: processIconSetOptions })
 
     const exported = iconSet.export()
 
