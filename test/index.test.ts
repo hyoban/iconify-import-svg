@@ -10,8 +10,8 @@ function omitLastModified<T extends { lastModified?: number }>(obj: T): Omit<T, 
 }
 
 describe('importSvgCollection', () => {
-  it('should import SVG collection', async () => {
-    const result = await importSvgCollection({
+  it('should import SVG collection', () => {
+    const result = importSvgCollection({
       source: path.join(assetsPath, 'vender/line'),
     })
 
@@ -39,8 +39,8 @@ describe('importSvgCollection', () => {
     `)
   })
 
-  it('should import SVG collection without subdirectories', async () => {
-    const result = await importSvgCollection({
+  it('should import SVG collection without subdirectories', () => {
+    const result = importSvgCollection({
       source: path.join(assetsPath, 'vender'),
       includeSubDirs: false,
     })
@@ -67,8 +67,8 @@ function omitLastModifiedFromCollections(
 }
 
 describe('importSvgCollections', () => {
-  it('should import nested directory structure as separate collections', async () => {
-    const result = await importSvgCollections({
+  it('should import nested directory structure as separate collections', () => {
+    const result = importSvgCollections({
       source: assetsPath,
     })
 

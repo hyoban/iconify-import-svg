@@ -1,12 +1,12 @@
 // Credits: https://iconify.design/docs/articles/cleaning-up-icons/#parsing-an-entire-icon-set
 import type { IconSet } from '@iconify/tools'
 import type { IconifyJSON } from '@iconify/types'
-import fs from 'node:fs/promises'
+import fs from 'node:fs'
 import path from 'node:path'
 import {
   cleanupSVG,
   deOptimisePaths,
-  importDirectory,
+  importDirectorySync,
   isEmptyColor,
   parseColors,
   runSVGO,
@@ -31,11 +31,11 @@ export interface ImportSvgCollectionsOptions {
 /**
  * Process icons in an icon set with color handling and optimization
  */
-async function processIconSet(iconSet: IconSet): Promise<void> {
+function processIconSet(iconSet: IconSet): void {
   // Track icons to remove due to processing errors
   const iconsToRemove: string[] = []
 
-  await iconSet.forEach((name, type) => {
+  iconSet.forEachSync((name, type) => {
     if (type !== 'icon') {
       // Do not parse aliases
       return
@@ -120,23 +120,23 @@ async function processIconSet(iconSet: IconSet): Promise<void> {
  * import { importSvgCollection } from '@egoist/tailwindcss-icons/iconify'
  *
  * // Prefix is derived from directory name
- * const icons = await importSvgCollection({
+ * const icons = importSvgCollection({
  *   source: './my-icons',
  * })
  * // icons.prefix === 'my-icons'
  * ```
  */
-export async function importSvgCollection(
+export function importSvgCollection(
   options: ImportSvgCollectionOptions,
-): Promise<IconifyJSON> {
+): IconifyJSON {
   const { source, includeSubDirs = true } = options
 
-  const iconSet = await importDirectory(source, {
+  const iconSet = importDirectorySync(source, {
     ignoreImportErrors: 'warn',
     includeSubDirs,
   })
 
-  await processIconSet(iconSet)
+  processIconSet(iconSet)
 
   return iconSet.export()
 }
@@ -144,11 +144,11 @@ export async function importSvgCollection(
 /**
  * Find all directories that directly contain SVG files
  */
-async function findSvgDirectories(rootDir: string): Promise<string[]> {
+function findSvgDirectories(rootDir: string): string[] {
   const result: string[] = []
 
-  async function traverse(dir: string): Promise<void> {
-    const entries = await fs.readdir(dir, { withFileTypes: true })
+  function traverse(dir: string): void {
+    const entries = fs.readdirSync(dir, { withFileTypes: true })
 
     let hasSvgFiles = false
     const subdirs: string[] = []
@@ -168,11 +168,11 @@ async function findSvgDirectories(rootDir: string): Promise<string[]> {
 
     // Recursively traverse subdirectories
     for (const subdir of subdirs) {
-      await traverse(subdir)
+      traverse(subdir)
     }
   }
 
-  await traverse(rootDir)
+  traverse(rootDir)
   return result
 }
 
@@ -196,18 +196,18 @@ async function findSvgDirectories(rootDir: string): Promise<string[]> {
  * //   alerts/
  * //     warning.svg
  *
- * const collections = await importSvgCollections({
+ * const collections = importSvgCollections({
  *   source: './icons',
  * })
  * // Result: { arrows: IconifyJSON, alerts: IconifyJSON }
  * ```
  */
-export async function importSvgCollections(
+export function importSvgCollections(
   options: ImportSvgCollectionsOptions,
-): Promise<Record<string, IconifyJSON>> {
+): Record<string, IconifyJSON> {
   const { source } = options
 
-  const svgDirs = await findSvgDirectories(source)
+  const svgDirs = findSvgDirectories(source)
 
   const collections: Record<string, IconifyJSON> = {}
 
@@ -215,12 +215,12 @@ export async function importSvgCollections(
     const relativePath = path.relative(source, dir)
     const prefix = relativePath.split(path.sep).join('-')
 
-    const iconSet = await importDirectory(dir, {
+    const iconSet = importDirectorySync(dir, {
       ignoreImportErrors: 'warn',
       includeSubDirs: false,
     })
 
-    await processIconSet(iconSet)
+    processIconSet(iconSet)
 
     const exported = iconSet.export()
 
