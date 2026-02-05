@@ -2,7 +2,7 @@
   "name": "iconify-import-svg",
   "type": "module",
   "version": "0.0.0",
-  "packageManager": "pnpm@10.25.0",
+  "packageManager": "pnpm@10.28.2",
   "description": "_description_",
   "author": "Stephen Zhou <hi@hyoban.cc>",
   "license": "MIT",
@@ -35,6 +35,11 @@
     "test": "vitest",
     "typecheck": "tsc",
     "prepare": "simple-git-hooks"
+  },
+  "dependencies": {
+    "@iconify/tools": "catalog:",
+    "@iconify/types": "catalog:",
+    "@iconify/utils": "catalog:"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:cli",
