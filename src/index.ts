@@ -26,6 +26,7 @@ export interface ImportSvgCollectionOptions {
 export interface ImportSvgCollectionsOptions {
   /** SVG root directory path */
   source: string
+  prefix?: string
 }
 
 /**
@@ -205,7 +206,7 @@ function findSvgDirectories(rootDir: string): string[] {
 export function importSvgCollections(
   options: ImportSvgCollectionsOptions,
 ): Record<string, IconifyJSON> {
-  const { source } = options
+  const { source, prefix } = options
 
   const svgDirs = findSvgDirectories(source)
 
@@ -213,7 +214,7 @@ export function importSvgCollections(
 
   for (const dir of svgDirs) {
     const relativePath = path.relative(source, dir)
-    const prefix = relativePath.split(path.sep).join('-')
+    const pathPrefix = relativePath.split(path.sep).join('-')
 
     const iconSet = importDirectorySync(dir, {
       ignoreImportErrors: 'warn',
@@ -225,7 +226,7 @@ export function importSvgCollections(
     const exported = iconSet.export()
 
     if (Object.keys(exported.icons).length > 0) {
-      collections[prefix] = exported
+      collections[prefix ? `${prefix}-${pathPrefix}` : pathPrefix] = exported
     }
   }
 

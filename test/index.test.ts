@@ -128,4 +128,19 @@ describe('importSvgCollections', () => {
       }
     `)
   })
+
+  it('should prepend custom prefix to collection names', () => {
+    const result = importSvgCollections({
+      source: assetsPath,
+      prefix: 'custom',
+    })
+
+    expect(Object.keys(result).sort()).toEqual([
+      'custom-public-avatar',
+      'custom-vender',
+      'custom-vender-line-alertsAndFeedback',
+      'custom-vender-line-arrows',
+      'custom-vender-pipeline',
+    ])
+  })
 })
