@@ -10,7 +10,7 @@ packages:
   - examples/*
 
 catalog:
-  '@iconify/tools': ^5.0.3
+  '@iconify/tools': ^4.2.0
   '@iconify/types': ^2.0.0
   '@iconify/utils': ^3.1.0
 
