@@ -1,7 +1,7 @@
 {
   "name": "iconify-import-svg",
   "type": "module",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "packageManager": "pnpm@10.28.2",
   "description": "_description_",
   "author": "Stephen Zhou <hi@hyoban.cc>",
