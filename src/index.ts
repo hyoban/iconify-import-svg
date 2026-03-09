@@ -1,5 +1,6 @@
 // Credits: https://iconify.design/docs/articles/cleaning-up-icons/#parsing-an-entire-icon-set
 import type { IconSet } from '@iconify/tools'
+import type { ParseColorsOptions } from '@iconify/tools/lib/colors/parse.js'
 import type { IconifyJSON } from '@iconify/types'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -21,7 +22,9 @@ export interface ProcessIconSetOptions {
   /**
    * @default true
    */
-  parseColors?: boolean
+  parseColors?: boolean | {
+    fallback?: ParseColorsOptions['callback']
+  }
   /**
    * @default true
    */
@@ -124,6 +127,13 @@ function processIconSet({
             // Remove shapes with white color
             if (compareColors(color, whiteColor)) {
               return 'remove'
+            }
+
+            if (typeof shouldParseColors !== 'boolean') {
+              const fallback = shouldParseColors.fallback
+              if (fallback) {
+                return fallback(attr, colorStr, color)
+              }
             }
 
             // Icon is not monotone
