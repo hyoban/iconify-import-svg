@@ -23,7 +23,7 @@ export interface ProcessIconSetOptions {
    * @default true
    */
   parseColors?: boolean | {
-    fallback?: ParseColorsOptions['callback']
+    callback?: ParseColorsOptions['callback']
   }
   /**
    * @default true
@@ -78,6 +78,9 @@ function processIconSet({
     runSVGO: shouldRunSVGO = true,
     deOptimisePaths: shouldDeOptimisePaths = true,
   } = options || {}
+  const customParseColorsCallback = typeof shouldParseColors === 'boolean'
+    ? undefined
+    : shouldParseColors.callback
 
   // Track icons to remove due to processing errors
   const iconsToRemove: string[] = []
@@ -119,6 +122,10 @@ function processIconSet({
               return color
             }
 
+            if (customParseColorsCallback) {
+              return customParseColorsCallback(attr, colorStr, color)
+            }
+
             // Change black to 'currentColor'
             if (compareColors(color, blackColor)) {
               return 'currentColor'
@@ -127,13 +134,6 @@ function processIconSet({
             // Remove shapes with white color
             if (compareColors(color, whiteColor)) {
               return 'remove'
-            }
-
-            if (typeof shouldParseColors !== 'boolean') {
-              const fallback = shouldParseColors.fallback
-              if (fallback) {
-                return fallback(attr, colorStr, color)
-              }
             }
 
             // Icon is not monotone

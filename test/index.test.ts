@@ -1,3 +1,5 @@
+import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { importSvgCollection, importSvgCollections } from '../src/index'
@@ -55,6 +57,33 @@ describe('importSvgCollection', () => {
         "prefix": "",
       }
     `)
+  })
+
+  it('should skip built-in color transforms when parseColors.callback is provided', () => {
+    const source = fs.mkdtempSync(path.join(os.tmpdir(), 'iconify-import-svg-'))
+
+    fs.writeFileSync(
+      path.join(source, 'custom.svg'),
+      [
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">',
+        '  <path fill="#000" d="M0 0h8v16H0z"/>',
+        '  <path fill="#fff" d="M8 0h8v16H8z"/>',
+        '</svg>',
+      ].join('\n'),
+    )
+
+    const result = importSvgCollection({
+      source,
+      parseColors: {
+        callback: (_, colorStr, color) => color || colorStr,
+      },
+      runSVGO: false,
+      deOptimisePaths: false,
+    })
+
+    expect(omitLastModified(result).icons.custom?.body).toContain('fill="#000"')
+    expect(omitLastModified(result).icons.custom?.body).toContain('fill="#fff"')
+    expect(omitLastModified(result).icons.custom?.body).not.toContain('currentColor')
   })
 })
 
